@@ -21,8 +21,11 @@ function displayHistory() {
     th1.textContent = 'Transformer';
     let th2 = document.createElement('th');
     th2.textContent = 'Collection ID';
+    let th3 = document.createElement('th');
+    th3.textContent = 'Size';
     headerRow.appendChild(th1);
     headerRow.appendChild(th2);
+    headerRow.appendChild(th3);
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
@@ -38,8 +41,11 @@ function displayHistory() {
         a.textContent = run.collectionId;
         a.target = "_blank"; // This makes the link open in a new tab
         td2.appendChild(a);
+        let td3 = document.createElement('td');
+        td3.textContent = run.size;  // Assuming that each run object in runHistory now has a size property
         tr.appendChild(td1);
         tr.appendChild(td2);
+        tr.appendChild(td3);
         tbody.appendChild(tr);
     }
     table.appendChild(tbody);
@@ -130,16 +136,22 @@ function performQuery() {
         // Display the GET result
         displayData(data);
     
+        // Get size from data
+        let dataSize = data.size;
+    
         // Add the run to the history
         runHistory.push({
             transformer: selectedTransformer,
             collectionId: data.id, // Use the ID from the GET result
-            url: data.url // Use the URL from the GET result
+            url: data.url, // Use the URL from the GET result
+            size: dataSize  // Include data size in runHistory
         });
     
         // Display the updated history
         displayHistory();
     })
+    
+    
     .catch(error => console.error('Error:', error));
     
     function fetchData(url) {
