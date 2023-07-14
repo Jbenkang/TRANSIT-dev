@@ -88,3 +88,24 @@ pre {
 #collectionIdButtons {
     display: none;
 }
+.left-align-content {
+    display: flex;
+    align-items: flex-start;
+}
+.container-fluid .col-md-4 * {
+    text-align: left;
+}
+.container-fluid .col-md-4 table {
+    margin-left: 0;
+}
+.container-fluid .col-md-4 input,
+.container-fluid .col-md-4 select {
+    display: block;
+    width: 100%;
+}
+#runHistoryColumn {
+    max-width: 400px;  /* adjust to the desired width */
+}
+#DataTransformerColumn {
+    max-width: 350px;  /* adjust to the desired width */
+}

@@ -30,25 +30,34 @@ function displayHistory() {
     table.appendChild(thead);
 
     // Add the history rows
-    let tbody = document.createElement('tbody');
-    for (let run of runHistory) {
-        let tr = document.createElement('tr');
-        let td1 = document.createElement('td');
-        td1.textContent = run.transformer;
-        let td2 = document.createElement('td');
+// Add the history rows
+let tbody = document.createElement('tbody');
+for (let run of runHistory) {
+    let tr = document.createElement('tr');
+    let td1 = document.createElement('td');
+    td1.textContent = run.transformer;
+    let td2 = document.createElement('td');
+    // Check if the collectionId is an error message
+    if (run.collectionId.startsWith('Error: ')) {
+        // If it's an error message, just display it
+        td2.textContent = run.collectionId;
+    } else {
+        // If it's not an error message, make it a link
         let a = document.createElement('a');
         a.href = run.url;
         a.textContent = run.collectionId;
         a.target = "_blank"; // This makes the link open in a new tab
         td2.appendChild(a);
-        let td3 = document.createElement('td');
-        td3.textContent = run.size;  // Assuming that each run object in runHistory now has a size property
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        tr.appendChild(td3);
-        tbody.appendChild(tr);
     }
-    table.appendChild(tbody);
+    let td3 = document.createElement('td');
+    td3.textContent = run.size;  // Assuming that each run object in runHistory now has a size property
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    tbody.appendChild(tr);
+}
+table.appendChild(tbody);
+
 }
 
 
@@ -123,7 +132,7 @@ function performQuery() {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`status ${response.status}`);
         } else {
             return response.json();
         }
@@ -151,8 +160,17 @@ function performQuery() {
         displayHistory();
     })
     
-    
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        console.error('Error:', error);
+        // Add the run to the history with an error status
+        runHistory.push({
+            transformer: selectedTransformer,
+            collectionId: `Error: ${error.message}`, // Put error message in the collectionId field
+            url: url, // The attempted URL
+        });
+        // Display the updated history
+        displayHistory();
+    });
     
     function fetchData(url) {
         return fetch(url)
