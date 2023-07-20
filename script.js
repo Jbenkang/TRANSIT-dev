@@ -203,6 +203,9 @@ function iterateData(data, parentElement, idCounter) {
 
         let tdKey = document.createElement('td');
         tdKey.textContent = key;
+        if (key.toLowerCase() === 'id') { // Check if key is 'id'
+            tdKey.style.fontWeight = 'bold'; // Apply bold style to key
+        }
         tr.appendChild(tdKey);
 
         let tdValue = document.createElement('td');
@@ -266,12 +269,17 @@ function iterateData(data, parentElement, idCounter) {
             tdValue.textContent = value;
         }
 
+        if (key.toLowerCase() === 'id') { // Check if key is 'id'
+            tdValue.style.fontWeight = 'bold'; // Apply bold style to value
+        }
+
         tr.appendChild(tdValue);
         parentElement.appendChild(tr);
     }
 
     return idCounter;
 }
+
 
 
 function displayTransformerInfo(transformerName) {
