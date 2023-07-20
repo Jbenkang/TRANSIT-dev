@@ -375,35 +375,48 @@ function removeInputField(paramName, inputContainer) {
     }
 }
 
+
+
+
 window.onload = function() {
+
+
+
     fetchData().then(data => {
         let transformerSelect = document.getElementById('transformerSelect');
-
+    
         // Add initial "Please select a transformer" option
         let initialOption = document.createElement('option');
         initialOption.text = "Please select a transformer";
         initialOption.value = "";
         transformerSelect.appendChild(initialOption);
-
+    
         for (let transformer of data) {
             transformers[transformer.name] = transformer;
-
+    
             let option = document.createElement('option');
-            option.text = transformer.name;
+            
+            // Check if the input_class is not 'none'
+            if (transformer.knowledge_map.input_class.toLowerCase() !== 'none') {
+                option.text = transformer.name + " (" + transformer.knowledge_map.input_class + ")";
+            } else {
+                option.text = transformer.name;
+            }
             option.value = transformer.name;
-
+    
             if (!transformerSelect.querySelector(`optgroup[label="${transformer.function}"]`)) {
                 let optgroup = document.createElement('optgroup');
                 optgroup.label = transformer.function;
                 transformerSelect.appendChild(optgroup);
             }
-
+    
             transformerSelect.querySelector(`optgroup[label="${transformer.function}"]`).appendChild(option);
         }
     });
+    
+
 
     // ...
-// Inside window.onload function
 // Inside window.onload function
 transformerSelect.onchange = function() {
     if (this.value !== "") {
@@ -411,13 +424,13 @@ transformerSelect.onchange = function() {
 
         let collectionIdContainer = document.getElementById('collectionIdContainer');
 
-        // Clear previous inputs
-        while (collectionIdContainer.firstChild) {
-            collectionIdContainer.firstChild.remove();
-        }
-
-        // If the selected transformer is an aggregator, add two collection ID input boxes
+        // If the selected transformer is an aggregator, clear previous inputs and add two collection ID input boxes
         if (transformers[this.value].function === 'aggregator') {
+            // Clear previous inputs
+            while (collectionIdContainer.firstChild) {
+                collectionIdContainer.firstChild.remove();
+            }
+
             let buttonContainer = document.createElement('div');
             let label = document.createElement('label');
             label.textContent = "Change number of Collection IDs  ";
@@ -449,20 +462,39 @@ transformerSelect.onchange = function() {
                 addInputField('collectionId', collectionIdContainer);
             }
         } else {
-            // If the selected transformer is not an aggregator, add one collection ID input box
-            let label = document.createElement('label');
-            label.textContent = 'Collection ID';
-            collectionIdContainer.appendChild(label);
+            // If the selected transformer is not an aggregator, check if a collection ID input box already exists
+            let input = collectionIdContainer.querySelector('input');
+            if (!input) {  // If no input box exists, create a new one
+                let label = document.createElement('label');
+                label.textContent = 'Collection ID';
+                collectionIdContainer.appendChild(label);
 
-            let input = document.createElement('input');
-            input.className = "form-control";
-            input.id = 'collectionId';
-            collectionIdContainer.appendChild(input);
+                input = document.createElement('input');
+                input.className = "form-control";
+                input.id = 'collectionId';
+                collectionIdContainer.appendChild(input);
+            }
         }
     }
 };
 
 
+
+
+
+
+
+function submitWorkflow() {
+    let selectedWorkflow = document.getElementById('workflowSelect').value;
+
+    // use the value of selectedWorkflow in the molepro name producer
+    if (selectedWorkflow === 'Workflow A1') {
+        workflowA1('yourCompoundName', scoreThreshold, maximumNumber, maximumFdr, diseaseContext)
+            .then(unionCollection2 => {
+                // do something with the final collection ID
+            });
+    }
+}
 
 
 
