@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Transformer</title>
+    <link href="styles.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-4" id="runHistoryColumn">
+                <h2>Run History</h2>
+                <table class="table table-striped" id="runHistory"></table>
+            </div>
+            
+
+            <div class="col-md-4" id="DataTransformerColumn">
+                <h1>Data Transformer</h1>
+                <label for="transformerSelect">Select Transformer:</label>
+                <select class="form-control" id="transformerSelect"></select>
+                <div id="collectionIdContainer">
+                    <br>
+                    <label for="collectionId">Collection ID:</label>
+                    <input type="text" class="form-control" id="collectionId">
+                </div>
+                <div id="parametersContainer"></div>
+                <button class="btn btn-primary mt-3" onclick="performQuery()">Submit</button>
+                <br>
+                <br>
+                <h5>Query Info</h5>
+                <pre id="queryInfo"></pre>
+                <br>
+                <h5>Selected Transformer Info</h5>
+                <pre id="transformerInfo"></pre>
+
+            </div>
+
+            
+            <div class="col-md-4">
+                <h2>Data Display</h2>
+                <table class="table table-striped" id="dataDisplay"></table>
+            </div>
+
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

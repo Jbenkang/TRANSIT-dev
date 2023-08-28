@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Transformer</title>
+    <link href="styles.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="index.html">Home</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Example Workflows
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="compound-workflow.html">Compound Workflow</a>
+                        <a class="dropdown-item" href="gene-workflow.html">Gene Workflow</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Compound Workflow</h1>
+        
+        <!-- Compound input field -->
+        <div class="form-group">
+            <label for="compoundName">Compound Name:</label>
+            <input type="text" id="compoundName" class="form-control" placeholder="Enter compound name">
+        </div>
+        
+        <!-- Radio buttons for workflow selection -->
+<!-- Radio buttons for workflow selection -->
+<div class="form-group">
+    <label>Select Workflow:</label><br>
+    <input type="radio" id="workflowA1" name="selectedWorkflow" value="A1" onclick="displayDynamicInputFields('A1')">
+    <label for="workflowA1">Workflow A1</label><br>
+    
+    <input type="radio" id="workflowA2" name="selectedWorkflow" value="A2" onclick="displayDynamicInputFields('A2')">
+    <label for="workflowA2">Workflow A2</label><br>
+    
+    <input type="radio" id="workflowA3" name="selectedWorkflow" value="A3" onclick="displayDynamicInputFields('A3')">
+    <label for="workflowA3">Workflow A3</label><br>
+    
+    <input type="radio" id="workflowA4" name="selectedWorkflow" value="A4" onclick="displayDynamicInputFields('A4')">
+    <label for="workflowA4">Workflow A4</label><br>
+</div>
+
+        
+        <button class="btn btn-primary" onclick="submitWorkflow()">Submit</button>
+
+
+        <div id="dynamicInputFields" class="form-group">
+            <!-- Dynamic input fields will be appended here -->
+
+
+
+
+        </div>
+        
+
+
+
+<!-- Output section -->
+<div class="form-group">
+    <label for="output">Output:</label>
+    <pre id="output" class="border p-3">
+        <!-- Output will be displayed here -->
+    </pre>
+</div>
+
+    
+    <script src="workflows.js"></script>
+    <!-- <script src="script.js"></script> -->
+
+</body>
+</html>
