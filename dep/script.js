@@ -73,121 +73,107 @@ async function fetchData() {
     });
     return response.json();
 }
+// Dummy function to act as displayData; replace with your actual implementation
+function displayData(data) {
+    console.log("Displaying data:", data);
+    // Your logic to display data goes here.
+}
 
-function performQuery() {
-    let selectedTransformer = document.getElementById('transformerSelect').value;
-    let collectionIdInputs = document.querySelectorAll('#collectionIdContainer input');
-    let collectionIds = Array.from(collectionIdInputs).map(input => input.value.trim()).filter(Boolean);
+async function performQuery(transformerName, collectionId, params = {}) {
+    console.log(`Performing query with transformer: ${transformerName}`);
 
-    let transformerData = transformers[selectedTransformer];
+    try {
+        const transformerData = transformers[transformerName];
+        if (!transformerData) {
+            console.error(`Transformer "${transformerName}" not found.`);
+            return { error: `Transformer "${transformerName}" not found.` };
+        }
 
-    // The URL for the transformer
-    let baseUrl = 'https://translator.broadinstitute.org/molecular_data_provider';
-    let url = baseUrl + '/transform';
+        const baseUrl = 'https://translator.broadinstitute.org/molecular_data_provider';
+        let url = baseUrl + '/transform';
+        let postData = {};
 
-    // Check the function type of the selected transformer and adjust the URL accordingly
-    let postData = {};
-    if (transformerData.function === 'aggregator') {
-        url = baseUrl + '/aggregate';
-        postData = {
-            operation: selectedTransformer,
-            collection_ids: collectionIds,
-            controls: []
-        };
-    } else if (transformerData.function === 'elements') {
-        url = baseUrl + '/collection/' + collectionIds[0];
-    } else {
-        postData = {
-            name: selectedTransformer,
-            collection_id: collectionIds[0]
-        };
+        if (transformerData.function === 'aggregator') {
+            url = baseUrl + '/aggregate';
+            postData = {
+                operation: transformerName,
+                collection_ids: [collectionId],
+                controls: []
+            };
+        } else if (transformerData.function === 'elements') {
+            url = baseUrl + `/collection/${collectionId}`;
+        } else {
+            postData = {
+                name: transformerName,
+                collection_id: collectionId
+            };
+        }
+
+        postData = { ...postData, ...params };
+
+        postData.controls = transformerData.parameters.map(param => {
+            const inputContainer = document.getElementById(`${param.name}-container`);
+            let values;
+            if (inputContainer) {
+                const inputs = inputContainer.getElementsByTagName('input');
+                values = Array.from(inputs).map(input => input.value);
+            } else {
+                values = [param.default];
+            }
+            return {
+                name: param.name,
+                value: values.join(';')
+            };
+        });
+
+        const queryInfo = document.getElementById('compoundName');
+        if (queryInfo) {
+            queryInfo.textContent = '';
+            queryInfo.textContent += `Query URL: ${url}\n`;
+            queryInfo.textContent += `Query JSON: ${JSON.stringify(postData, null, 2)}\n\n`;
+        } else {
+            console.error("Element with id 'compoundName' not found.");
+        }
+
+        console.log("Sending request to:", url);
+        console.log("With data:", JSON.stringify(postData));
+
+        const response = await fetch(url, {
+            method: "POST",
+            mode: 'cors',
+            credentials: 'same-origin',
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(postData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const fetchedData = await fetchData(data.url);
+        
+        return fetchedData;  // Return the fetched data
+
+    } catch (error) {
+        console.error('Error in performQuery:', error);
+        return { error: error.message };  // Return an error object
     }
 
-    postData.controls = transformerData.parameters.map(param => {
-        let inputContainer = document.getElementById(`${param.name}-container`);
-        let inputs = inputContainer.getElementsByTagName('input');
-        let values = Array.from(inputs).map(input => input.value);
-        return {
-            name: param.name,
-            value: values.join(';')
-        };
-    });
-
-    // Get the query info element
-    let queryInfo = document.getElementById('queryInfo');
-    
-    // Clear any previous query info
-    queryInfo.textContent = '';
-
-    // Display the URL and JSON payload of the POST request
-    queryInfo.textContent += `Query URL: ${url}\n`;
-    queryInfo.textContent += `Query JSON: ${JSON.stringify(postData, null, 2)}\n\n`;
-
-    fetch(url, {
-        method: "POST",
-        mode: 'cors',
-        credentials: 'same-origin',
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(postData),  // Convert the JavaScript object to a JSON string
-    })
-    .then(response => {
+    async function fetchData(url) {
+        const response = await fetch(url);
         if (!response.ok) {
-            throw new Error(`status ${response.status}`);
-        } else {
-            return response.json();
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    })
-    .then(data => {
-        // Make a GET request to the URL from the POST result
-        return fetchData(data.url);
-    })
-    .then(data => {
-        // Display the GET result
-        displayData(data);
-    
-        // Get size from data
-        let dataSize = data.size;
-    
-        // Add the run to the history
-        runHistory.push({
-            transformer: selectedTransformer,
-            collectionId: data.id, // Use the ID from the GET result
-            url: data.url, // Use the URL from the GET result
-            size: dataSize  // Include data size in runHistory
-        });
-    
-        // Display the updated history
-        displayHistory();
-    })
-    
-    .catch(error => {
-        console.error('Error:', error);
-        // Add the run to the history with an error status
-        runHistory.push({
-            transformer: selectedTransformer,
-            collectionId: `Error: ${error.message}`, // Put error message in the collectionId field
-            url: url, // The attempted URL
-        });
-        // Display the updated history
-        displayHistory();
-    });
-    
-    function fetchData(url) {
-        return fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                } else {
-                    return response.json();
-                }
-            });
+        return await response.json();
     }
 }
 
 
 
-
 function displayData(data) {
+    console.log("Displaying data:", data);
+
     let table = document.getElementById('dataDisplay');
     table.innerHTML = '';  // Clear previous content
 
@@ -197,6 +183,10 @@ function displayData(data) {
     let i = 0;  // Counter for unique IDs
     iterateData(data, tbody, i);
 }
+
+
+
+
 function iterateData(data, parentElement, idCounter) {
     for (let key in data) {
         let tr = document.createElement('tr');
